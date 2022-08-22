@@ -11,8 +11,6 @@ components.py makes compoments of the GANs such as discriminator, generator and 
 
 utils,py contains crutial functions required for KLD calculation and data input.
 
-GE_ForGAN.py is the initail implementation where it do univariate analysis and output single prediction.
-
-mutlistep.py has some adaptation and it can be used to do multi-varaiate analysis and predection as well.
+mutlistep.py has some adaptation from original code and it can be used to do multi-varaiate / uni-variate analysis and prediction as well.
 
 I have also included few of the graph showing the prediction of the network.
