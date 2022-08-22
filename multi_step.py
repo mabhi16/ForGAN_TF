@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 from utils import calc_kld
 from components import build_Gen, build_Disc, comgan
-# from Avg_GAN import lin_plot
 
 df_ge = pd.read_csv('data_stock.csv', engine='python')
 print("checking if any null values are present\n", df_ge.isna().sum())
@@ -56,7 +55,6 @@ hist_max = 11
 rs = np.random.RandomState(1368)
 generator = build_Gen(noise_size, x_tr.shape[2], pred_step, cond_size, gen_lat_size, 'gru')
 discriminator = build_Disc(cond_size, x_tr.shape[2], pred_step, disc_lat_size, 'gru')
-# cgan = comgan(generator, discriminator)
 
 print("\nNetwork Architecture\n")
 print(generator.summary())
@@ -86,7 +84,6 @@ for step in range(n_steps):
         d_real_loss = discriminator.train_on_batch([real_data, condition], tar_real)
         d_loss += d_real_loss
         x_fake = generator.predict([noise_batch, condition])
-        # x_fake = np.reshape(x_fake, [batch_size, 1, x_fake.shape[1]])
         d_fake_loss = discriminator.train_on_batch([x_fake, condition], tar_fake)
         d_loss += d_fake_loss
 
@@ -111,7 +108,6 @@ for step in range(n_steps):
 
 print("Training Completed, working on testing")
 rc_model = tf.keras.models.load_model("GE_multistep_model")
-# y_test = y_te.flatten()
 preds = []
 rmses = []
 maes = []
@@ -126,39 +122,15 @@ for _ in range(100):
     pred = rc_model.predict([noise_batch, x_te])
     mean_pred = mean_pred + pred
     preds.append(pred)
-    # pred.flatten()
 
     error = pred - y_te
     rmses.append(np.sqrt(np.square(error).mean()))
     maes.append(error.mean())
-    # mapes.append((error / y_test).mean() * 100)
 mean_pred = mean_pred / 100
-# mean_pred.flatten()
 preds = np.vstack(preds)
-# preds = preds.flatten()
 kld = calc_kld(preds, y_te, hist_bins, hist_min, hist_max)
 print("Test resuts:\nRMSE : {}({})\nMAE : {}({})\nKLD : {}\n"
       .format(np.mean(rmses), np.std(rmses),
               np.mean(maes), np.std(maes),
               # np.mean(mapes), np.std(mapes),
               kld))
-# S1 = mean_pred[:, [0], :]
-# S1 = np.reshape(S1, [x_te.shape[0], x_te.shape[2]])
-# GT_s1 = y_te[:, [0], :]
-# GT_s1 = np.reshape(GT_s1, [x_te.shape[0], x_te.shape[2]])
-# S2 = mean_pred[:, [1], :]
-# S2 = np.reshape(S2, [x_te.shape[0], x_te.shape[2]])
-# GT_s2 = y_te[:, [1], :]
-# GT_s2 = np.reshape(GT_s2, [x_te.shape[0], x_te.shape[2]])
-# S3 = mean_pred[:, [2], :]
-# S3 = np.reshape(S3, [x_te.shape[0], x_te.shape[2]])
-# GT_s3 = y_te[:, [2], :]
-# GT_s3 = np.reshape(GT_s3, [x_te.shape[0], x_te.shape[2]])
-# y_min = -0.1
-# y_max = 1.2
-# P1 = lin_plot(S1, GT_s1)
-# P1.show()
-# P2 = lin_plot(S2, GT_s2)
-# P2.show()
-# P3 = lin_plot(S3, GT_s3)
-# P3.show()
